@@ -1,11 +1,20 @@
-SNAKE GAME - Projet Université
+SNAKE GAME - Projet
 =============================
 
+Auteur: Mohamed JILANI
+Date: 05/10/2025
+
+Description:
+------------
+Jeu du Snake classique développé en C avec SDL2. Le joueur contrôle un serpent
+qui doit manger des fruits pour grandir tout en évitant les obstacles.
+
 Fonctionnalités de base:
-- Jeu du snake classique avec SDL2
-- Taille de map dynamique
+- Jeu du snake classique
+- Taille de map dynamique (15x15, 20x20, 25x25)
 - Collisions avec murs et obstacles
-- Téléportation aux bords
+- Téléportation aux bords de l'écran
+- Fruits qui font grandir le serpent
 
 Fonctionnalités bonus:
 - Système de score
@@ -13,13 +22,40 @@ Fonctionnalités bonus:
 - Fruits spéciaux (30 points)
 - Menu interactif
 - Obstacles aléatoires
-- Vitesse variable
+- Vitesse variable selon la difficulté
+
+Structure du projet:
+-------------------
+- snake.h    : En-tête principal avec structures et prototypes
+- game.h     : Logique du jeu (Snake, GameMap, GameLogic)
+- graphics.h : Affichage graphique et menu
+- snake.c    : Point d'entrée principal
+- game.c     : Implémentation de la logique du jeu
+- graphics.c : Implémentation de l'affichage
+- Makefile   : Fichier de compilation
+
+Compilation:
+-----------
+make
+
+Exécution:
+---------
+./snake
 
 Commandes:
-- Flèches: Déplacer le serpent
-- ESPACE: Sélectionner dans le menu
-- M: Retour au menu
-- ECHAP: Quitter
+---------
+- Flèches directionnelles : Déplacer le serpent
+- ESPACE : Sélectionner dans le menu
+- M : Retour au menu principal
+- ECHAP : Quitter le jeu
 
-Compilation: make
-Execution: ./snake
+Niveaux de difficulté:
+---------------------
+1. Facile   : Map 15x15, peu d'obstacles, vitesse lente
+2. Moyen    : Map 20x20, obstacles modérés, vitesse normale
+3. Difficile: Map 25x25, nombreux obstacles, vitesse rapide
+
+Dépendances:
+-----------
+- SDL2 (libsdl2-dev)
+- Compilateur C (gcc)
