@@ -4,7 +4,6 @@
 #include <string.h>
 #include <time.h>
 #include <SDL2/SDL.h>
-
 #define WINDOW_SIZE 600
 #define MAX_OBSTACLES 20
 
@@ -62,6 +61,7 @@ struct Game {
     bool in_menu;
     int score;
     int difficulty;
+    int game_speed;
     SDL_Window *window;
     SDL_Renderer *renderer;
 };
@@ -390,30 +390,60 @@ void render_menu(Game *game, int selected_option) {
     SDL_SetRenderDrawColor(game->renderer, 0, 0, 0, 255);
     SDL_RenderClear(game->renderer);
     
-    // Titre
     SDL_Color white = {255, 255, 255, 255};
     SDL_Color yellow = {255, 255, 0, 255};
     
-    // Dessiner les options
     char *options[] = {
-        "1. Facile (Petite map, peu d'obstacles)",
-        "2. Moyen (Map moyenne, obstacles modérés)", 
-        "3. Difficile (Grande map, nombreux obstacles)",
-        "Appuyez sur ESPACE pour selectionner"
+        "FACILE - Petite map, peu d'obstacles",
+        "MOYEN - Map moyenne, obstacles modérés", 
+        "DIFFICILE - Grande map, nombreux obstacles"
     };
     
-    for (int i = 0; i < 4; i++) {
-        SDL_Color color = (i == selected_option) ? yellow : white;
+    // Afficher les instructions dans la console
+    if (selected_option != -1) {
+        system("clear");  // Effacer la console (Linux)
+        printf("=== SNAKE GAME - MENU ===\n\n");
+        printf("Utilisez les fleches ↑↓ pour naviguer\n");
+        printf("ESPACE pour selectionner\n\n");
         
-        // Simulation d'affichage de texte (en pratique, utiliser SDL_ttf)
+        for (int i = 0; i < 3; i++) {
+            if (i == selected_option) {
+                printf(">>> %s <<<\n", options[i]);
+            } else {
+                printf("    %s\n", options[i]);
+            }
+        }
+        printf("\n[ESPACE] Commencer | [ECHAP] Quitter\n");
+    }
+    
+    // Dessiner des formes simples pour le menu visuel
+    for (int i = 0; i < 3; i++) {
+        SDL_Color color = (i == selected_option) ? yellow : white;
         SDL_SetRenderDrawColor(game->renderer, color.r, color.g, color.b, color.a);
-        SDL_Rect option_rect = {100, 200 + i * 60, 400, 40};
-        if (i < 3) {
-            SDL_RenderDrawRect(game->renderer, &option_rect);
+        
+        // Cadre de l'option
+        SDL_Rect option_rect = {100, 200 + i * 80, 400, 60};
+        SDL_RenderDrawRect(game->renderer, &option_rect);
+        
+        // Cercle de sélection
+        if (i == selected_option) {
+            SDL_Rect selector = {70, 215 + i * 80, 20, 20};
+            SDL_RenderFillRect(game->renderer, &selector);
         }
         
-        // Ici normalement on utiliserait TTF_RenderText, mais pour simplifier:
-        printf("%s\n", options[i]);
+        // Texte simplifié (juste des barres pour représenter le texte)
+        SDL_SetRenderDrawColor(game->renderer, color.r, color.g, color.b, color.a);
+        for (int j = 0; j < 5; j++) {
+            SDL_Rect text_bar = {120, 225 + i * 80 + j * 6, 200 + j * 10, 3};
+            SDL_RenderFillRect(game->renderer, &text_bar);
+        }
+    }
+    
+    // Instructions en bas
+    SDL_SetRenderDrawColor(game->renderer, 100, 100, 255, 255);
+    for (int j = 0; j < 3; j++) {
+        SDL_Rect instr_bar = {150, 500 + j * 10, 300 - j * 20, 4};
+        SDL_RenderFillRect(game->renderer, &instr_bar);
     }
     
     SDL_RenderPresent(game->renderer);
@@ -440,13 +470,25 @@ void show_menu(Game *game) {
                     case SDLK_SPACE:
                     case SDLK_RETURN:
                         menu_running = false;
-                        // Définir la taille selon la difficulté
+                        // Définir la taille et la vitesse selon la difficulté
                         int size;
                         switch (selected_option) {
-                            case 0: size = 15; break; // Facile
-                            case 1: size = 20; break; // Moyen
-                            case 2: size = 25; break; // Difficile
-                            default: size = 20; break;
+                            case 0: 
+                                size = 15; 
+                                game->game_speed = 200; // Facile = lent
+                                break;
+                            case 1: 
+                                size = 20; 
+                                game->game_speed = 150; // Moyen = normal
+                                break;
+                            case 2: 
+                                size = 25; 
+                                game->game_speed = 100; // Difficile = rapide
+                                break;
+                            default: 
+                                size = 20; 
+                                game->game_speed = 150;
+                                break;
                         }
                         init_game(game, size, selected_option + 1);
                         SDL_SetWindowTitle(game->window, "Snake Game - En cours");
@@ -460,7 +502,7 @@ void show_menu(Game *game) {
         }
         
         render_menu(game, selected_option);
-        SDL_Delay(16); // ~60 FPS
+        SDL_Delay(16);
     }
 }
 
@@ -599,6 +641,7 @@ int main(int argc, char *argv[]) {
     
     game.running = true;
     game.in_menu = true;
+    game.game_speed = 150; // Valeur par défaut
     
     // Afficher le menu au démarrage
     show_menu(&game);
@@ -610,8 +653,8 @@ int main(int argc, char *argv[]) {
         
         handle_events(&game);
         
-        // CHANGEMENT: 100ms / 150ms (plus lent)
-        if (!game.in_menu && current_time - last_update > 150) {
+        
+        if (!game.in_menu && current_time - last_update > game.game_speed) {
             update_game(&game);
             last_update = current_time;
         }

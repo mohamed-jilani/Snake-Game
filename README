@@ -1,0 +1,25 @@
+SNAKE GAME - Projet Université
+=============================
+
+Fonctionnalités de base:
+- Jeu du snake classique avec SDL2
+- Taille de map dynamique
+- Collisions avec murs et obstacles
+- Téléportation aux bords
+
+Fonctionnalités bonus:
+- Système de score
+- 3 niveaux de difficulté
+- Fruits spéciaux (30 points)
+- Menu interactif
+- Obstacles aléatoires
+- Vitesse variable
+
+Commandes:
+- Flèches: Déplacer le serpent
+- ESPACE: Sélectionner dans le menu
+- M: Retour au menu
+- ECHAP: Quitter
+
+Compilation: make
+Execution: ./snake
